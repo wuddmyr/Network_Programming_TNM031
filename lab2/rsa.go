@@ -31,7 +31,7 @@ func main() {
 	phi.Mul(phi, big.NewInt(0).Sub(big.NewInt(0).Set(q), big.NewInt(1)))
 
 	// generate random prime (16 bit) for e
-	// check if e is factor in phi, if factor generate a new prime and check, and so on..
+	// check if e is factor in phi, if factor generate a new prime and check
 	e, _ := rand.Prime(rand.Reader, 16)
 	for {
 		gcd := big.NewInt(0).GCD(nil, nil, e, phi)
