@@ -7,7 +7,7 @@ import javax.net.ssl.*;
 import java.security.*;
 import java.util.StringTokenizer;
 
-import java.nio.file.Files;
+import java.nio.file.*;
 
 public class Server {
     
@@ -40,59 +40,68 @@ public class Server {
 			System.out.println("\n>>>> Server: active ");
 			SSLSocket incoming = (SSLSocket)sss.accept();
 
-      	    // BufferedReader in = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
-			PrintWriter out = new PrintWriter(incoming.getOutputStream(), true);			
+            DataOutputStream out = new DataOutputStream(incoming.getOutputStream());
             DataInputStream in = new DataInputStream(incoming.getInputStream());
 
-            int optionFromClient = in.readInt();
-            System.out.println("OptionClient==" + optionFromClient);
-
-            switch (optionFromClient) {
-                           
-                case 1: 
-         
-
-                    break;
-                
-                case 2:
-                    int fileNameLength = in.readInt();
-                    String fileName = "haha.txt";
-					if(fileNameLength > 0) {
-                        byte[] data = new byte[fileNameLength];
-                        in.readFully(data, 0, fileNameLength);
-                        fileName = new String(data);
-                        fileName = "test_" + fileName;
-                    }
-                
-                    int fileLength = in.readInt();
-                    if(fileLength > 0) {
-                        byte[] file = new byte[fileLength];
-                        in.readFully(file, 0, fileLength); //read message
-                        Files.write(new File(fileName).toPath(), file);
-                    }
-                    break;
-                
-                case 3: 
-                   
-
-
-                    break;
-                
-                default:
-                    System.out.println("CLIENTEN ÄR EN DISCGOLFARE, VAFAN..");
-                    break;
-            }
-
-            // int l = in.readInt();
-            // System.out.println(l);
-			// if(l > 0) {
-			// 	byte[] message = new byte[l];
-            //     in.readFully(message, 0, l); //read message ?
-                
-            //     System.out.println(new String(message));
-			// }
-				
+            int optionFromClient;
+            int fileNameLength;
+            String fileName;
             
+            while ((optionFromClient = in.readInt()) != 0) {
+                System.out.println(optionFromClient);
+                switch (optionFromClient) {
+                    case 1: 
+                        fileNameLength = in.readInt();
+        
+                        if(fileNameLength > 0) {
+                            byte[] data = new byte[fileNameLength];
+                            in.readFully(data, 0, fileNameLength);
+                            fileName = new String(data);
+                            
+                            System.out.println(fileName);
+                            File file = new File(fileName);
+                            
+                            byte[] message = Files.readAllBytes(file.toPath());         
+                            System.out.println(message);
+
+                            out.writeInt(message.length);
+                            out.write(message);
+                            System.out.println("Downloaded!");
+                        }
+
+                        break;
+                    
+                    case 2:
+                        fileNameLength = in.readInt();
+                        if(fileNameLength > 0) {
+                            byte[] data = new byte[fileNameLength];
+                            in.readFully(data, 0, fileNameLength);
+                            fileName = new String(data);
+                        
+                            int fileLength = in.readInt();
+                            if(fileLength > 0) {
+                                byte[] file = new byte[fileLength];
+                                in.readFully(file, 0, fileLength); 
+                                Files.write(new File(fileName).toPath(), file);
+                            }
+                        }
+                        break;
+                    
+                    case 3: 
+                        fileNameLength = in.readInt();
+        
+                        if(fileNameLength > 0) {    
+                            byte[] data = new byte[fileNameLength];
+                            in.readFully(data, 0, fileNameLength);
+                            fileName = new String(data);
+                            Files.deleteIfExists(Paths.get(fileName));
+                        }
+                        break;
+        
+                    default:
+                        break;
+                }
+            }
             incoming.close();
 		} catch(Exception x) {
 			System.out.println(x);
@@ -100,28 +109,8 @@ public class Server {
 		}
     }
 
-
-	// download files
-
-
-
-	// upload files
-
-
-
-	// delte files
-
-
-
-
-
-	
-    
     public static void main(String[] args) {
-
-        Server myserver = new Server();
-        myserver.start();
-
-        System.out.println("hata java");
+        Server s = new Server();
+        s.start();
     }
 }

@@ -6,16 +6,14 @@ import java.net.*;
 import javax.net.ssl.*;
 import java.security.*;
 import java.util.StringTokenizer;
-
-//import java.nio.File;
 import java.nio.file.Files;
 
 public class Client {
     
     static final String HOST = "0.0.0.0";
     static final int PORT = 1337;
-    static final String KEYSTORE = "LIUkeystore.ks";
-    static final String TRUSTSTORE = "LIUtruststore.ks";
+    static final String KEYSTORE = "MYkeystore.ks";
+    static final String TRUSTSTORE = "MYtruststore.ks";
     static final String KEYSTOREPASS = "123456";
     static final String TRUSTSTOREPASS = "abcdef";
 
@@ -40,10 +38,7 @@ public class Client {
             client.setEnabledCipherSuites(client.getSupportedCipherSuites());
             System.out.println("\n>>>> SSL/TLS handshake completed");
             
-            BufferedReader socketIn;
-			socketIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            
-            //PrintWriter socketOut = new PrintWriter(client.getOutputStream(), true);
+			DataInputStream socketIn = new DataInputStream(client.getInputStream());
             DataOutputStream socketOut = new DataOutputStream(client.getOutputStream());
 
             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
@@ -51,11 +46,14 @@ public class Client {
             
             while (true) {
                 
-                System.out.println("------Sammes menu------");
-                System.out.println("Click 1: option 1 - download files");
-                System.out.println("Click 2: option 2 - upload files");
-                System.out.println("Click 3: option 3 - delete files");
-            
+                System.out.println("------ Lab 3: Secure Sockets ------");
+                System.out.println("");
+                System.out.println("Choose an option: ");
+                System.out.println("Click 1 to download files");
+                System.out.println("Click 2 to upload files");
+                System.out.println("Click 3 to delete files" );
+                System.out.println("Click 0 to quit");
+
                 try {
                     option = Integer.parseInt(userInput.readLine());
                 } catch (NumberFormatException e) {
@@ -63,18 +61,34 @@ public class Client {
                 }
 
                 socketOut.writeInt(option);
+                String fileName;
 
                 switch (option) {
+
+                    case 0:
+                        socketOut.writeInt(0);
+                        client.close();
+                        return;
                            
                     case 1: 
                         System.out.println("Please enter the filename you want to download");
+                        fileName = userInput.readLine();
 
+                        socketOut.writeInt(fileName.length());
+                        socketOut.write(fileName.getBytes());
+
+                        int fileLength = socketIn.readInt();
+                        if(fileLength > 0) {
+                            byte[] data = new byte[fileLength];
+                            socketIn.readFully(data, 0, fileLength);
+                            Files.write(new File(fileName).toPath(), data);
+                        }
                         break;
                     
                     case 2:
                         System.out.println("Please enter the filename you want to upload");
             
-                        String fileName = userInput.readLine();
+                        fileName = userInput.readLine();
                         File file = new File(fileName);
 
                         byte[] message = Files.readAllBytes(file.toPath());
@@ -91,48 +105,19 @@ public class Client {
                     
                     case 3: 
                         System.out.println("Please enter the filename you want to delete");
-
-
+                        fileName = userInput.readLine();
+                        
+                        socketOut.writeInt(fileName.length());
+                        socketOut.write(fileName.getBytes());
+                        
                         break;
                     
                     default:
-                        System.out.println("VÄLJ ETT NUMMER SOM EXISTERAR, PAJAS..");
+                        System.out.println("Error...");
                         break;
                 }
 
             }
-
-
-
-            // }
-        //    SSLServerSocket sss = (SSLServerSocket)sslServerFactory.createServerSocket(PORT);
-        //    sss.setEnabledCipherSuites(sss.getSupportedCipherSuites());
-            
-        //    System.out.println("\n>>>> Server: active ");
-        //    SSLSocket incoming = (SSLSocket)sss.accept();
-
-        //     BufferedReader in = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
-        //    PrintWriter out = new PrintWriter(incoming.getOutputStream(), true);			
-            
-        //    String str;
-        //    while (!(str = in.readLine()).equals("")) {
-        //        System.out.println(str);
-                
-        //        // double result = 0;
-        //        // StringTokenizer st = new StringTokenizer( str );
-        //        // try {
-        //        // 	while( st.hasMoreTokens() ) {
-        //        // 		Double d = new Double( st.nextToken() );
-        //        // 		result += d.doubleValue();
-        //        // 	}
-        //        // 	out.println( "The result is " + result );
-        //        // }
-        //        // catch( NumberFormatException nfe ) {
-        //        // 	out.println( "Sorry, your list contains an invalid number" );
-        //        // }
-        //    }
-            
-        //    incoming.close();
         } catch(Exception x) {
             System.out.println(x);
             x.printStackTrace();
@@ -140,10 +125,7 @@ public class Client {
     }
         
     public static void main(String[] args) {
-
-        Client myserver = new Client();
-        myserver.start();
-
-        System.out.println("hata java");
+        Client c = new Client();
+        c.start();
     }
 }
