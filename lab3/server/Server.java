@@ -58,8 +58,8 @@ public class Server {
                     int fileNameLength = in.readInt();
                     String fileName = "haha.txt";
 					if(fileNameLength > 0) {
-                        byte[] data = new byte[l1];
-                        in.readFully(data, 0, l1);
+                        byte[] data = new byte[fileNameLength];
+                        in.readFully(data, 0, fileNameLength);
                         fileName = new String(data);
                         fileName = "test_" + fileName;
                     }

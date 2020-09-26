@@ -74,14 +74,14 @@ public class Client {
                     case 2:
                         System.out.println("Please enter the filename you want to upload");
             
-                        String filename = userInput.readLine();
-                        File file = new File(filename);
+                        String fileName = userInput.readLine();
+                        File file = new File(fileName);
 
                         byte[] message = Files.readAllBytes(file.toPath());
                         System.out.println(message);
 
-                        socketOut.writeInt(filename.length());
-                        socketOut.write(filename.getBytes());
+                        socketOut.writeInt(fileName.length());
+                        socketOut.write(fileName.getBytes());
                         
                         socketOut.writeInt(message.length);
                         socketOut.write(message);
