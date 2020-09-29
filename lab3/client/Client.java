@@ -100,7 +100,6 @@ public class Client {
                         socketOut.writeInt(message.length);
                         socketOut.write(message);
                         
-                        System.out.println("Succesfully uploaded file: " + fileName);
                         break;
                     
                     case 3: 
