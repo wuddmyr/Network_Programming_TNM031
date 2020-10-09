@@ -6,7 +6,6 @@ import java.net.*;
 import javax.net.ssl.*;
 import java.security.*;
 import java.util.StringTokenizer;
-
 import java.nio.file.*;
 
 public class Server {
@@ -19,6 +18,7 @@ public class Server {
     
     public void start() {
         try {
+
 			KeyStore ks = KeyStore.getInstance("JCEKS");
 			ks.load(new FileInputStream(KEYSTORE), KEYSTOREPASS.toCharArray());
 			
@@ -35,11 +35,12 @@ public class Server {
 			sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 			SSLServerSocketFactory sslServerFactory = sslContext.getServerSocketFactory();
 			SSLServerSocket sss = (SSLServerSocket)sslServerFactory.createServerSocket(PORT);
-			sss.setEnabledCipherSuites(sss.getSupportedCipherSuites());
+            sss.setNeedClientAuth(true);
+            sss.setEnabledCipherSuites(sss.getSupportedCipherSuites());
 			
 			System.out.println("\n>>>> Server: active ");
 			SSLSocket incoming = (SSLSocket)sss.accept();
-
+            
             DataOutputStream out = new DataOutputStream(incoming.getOutputStream());
             DataInputStream in = new DataInputStream(incoming.getInputStream());
 
