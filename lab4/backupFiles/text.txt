@@ -1,0 +1,7 @@
+The specific looping scenario just described can be avoided using a technique known
+as poisoned reverse. The idea is simple—if z routes through y to get to destination x,
+then z will advertise to y that its distance to x is infinity, that is, z will advertise to y
+that D z (x) = ∞ (even though z knows D z (x) = 5 in truth). z will continue telling this
+little white lie to y as long as it routes to x via y. Since y believes that z has no path
+to x, y will never attempt to route to x via z, as long as z continues to route to x via y
+(and lies about doing so).
