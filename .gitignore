@@ -1,1 +1,5 @@
+__pycache__
 .vscode
+lab4/files/*
+private_key.pem
+public_key.pem
